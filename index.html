@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html ng-app="booklistApp">
+
+<head>
+    <meta charset="utf-8">
+    <title>图书借阅列表</title>
+	<link rel="stylesheet" href="components/css/bootstrap.css">
+	<link rel="stylesheet" href="components/css/angular-motion.css">	
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<script src="components/js/angular.min.js"></script>
+	<script src="components/js/angular-animate.min.js"></script>
+	<script src="components/js/angular-strap.min.js"></script>
+	<script src="components/js/angular-strap.tpl.min.js"></script>	
+	<script type="text/javascript" src="js/booklist.js"></script>
+
+    </head>
+    <body ng-controller="bookController">
+
+    <div >
+      <div class="container-fluid">
+      <div class="pagehead">
+          <div style="float:left;"><span><img src="css/logo.png" ></span><span style="margin-left: 20px; font-size:1.2em;">当前书籍总数： {{books.length}} 本</span></div>
+          <div style="float:right;">
+                <form class="form-inline" ng-submit='addBook()'>                
+                <input class="form-control" type='text' ng-model='newBookName' placeholder="书名" required></input>
+                <input class="form-control" type='text' ng-model='newBookURL' placeholder="书籍介绍URL"></input>
+				<input class="form-control" type='text' ng-model='newBookAuthor' placeholder="作者/编者"></input>
+                    <input class="btn btn-primary" type='submit' value='增加书籍'></input>
+                </form>
+          </div>
+          <div style="clear:both;"></div>
+      </div>
+      <div class="row ">
+
+
+            <div class="col-md-5">
+            <div class="panel panel-primary ">
+                <div class="panel-heading  panel-primary"><h3 class="panel-title">库存书单（共{{shelfBooks.length}}本）<h3></div>
+                <table class="table table-striped table-hover fixedListTable tableBordered">
+                <thead>
+                    <tr>
+                        <th>书名</th>
+                        <th style="width:120px;" class="threeFunctionsColumnTitle">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr  ng-repeat="book in shelfBooks track by $index">
+                        <td><span ng-hide="book.info" class="glyphicon glyphicon-minus"></span>
+                        <span ng-show="book.info" class="glyphicon glyphicon-heart"></span>
+                        <span><a target="_blank" href='{{book.bookurl==null ?"https://www.baidu.com/s?wd="+book.bookname : book.bookurl}}' >{{book.bookname}}</a> </span><span class="author">{{book.bookauthor}}</span></td>
+                        <td><div class="btn-group">
+                           <button ng-click="togglePopover(book)" id="book{{book.bookid}}" class="btn btn-success btn-sm glyphicon glyphicon-ok"  title="{{popover.title}}" data-content="{{popover.content}}"
+                                   data-template-url="popover.html" data-animation="am-flip-x" data-auto-close="1" data-container="body" data-toggle="popover" data-placement="left" bs-popover="popover"></button>
+                            <button ng-click="infoBook(book)" class="btn btn-info btn-sm glyphicon glyphicon-info-sign " title="查看借阅记录"></button>
+                            <button ng-click="removeBook(book)" class="btn btn-danger btn-sm glyphicon glyphicon-remove" title="删除此书籍"></button>
+
+                      </div></td>
+                    </tr>
+                </tbody>
+                </table>
+                </div>
+
+
+            </div>
+            <div class="col-md-7 ">
+            <div class="panel panel-primary ">
+                <div class="panel-heading  panel-primary"><h3 class="panel-title">借阅书单（共{{borrowBooks.length}}本）<h3></div>
+                <table class="table table-striped table-hover fixedListTable tableBordered">
+                <thead>
+                    <tr>
+                        <th style="width:70%;">书名</th>
+                        <th style="width:10%;">借阅者</th>
+                        <th style="width:10%;">借阅时间</th>
+                        <th style="width:100px;" class="threeFunctionsColumnTitle">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="" ng-repeat="book in borrowBooks track by $index">
+                        <td><span ng-hide="book.info" class="glyphicon glyphicon-minus"></span>
+                        <span ng-show="book.info" class="glyphicon glyphicon-heart"></span>
+                        <span><a target="_blank" href='{{book.bookurl==null ?"https://www.baidu.com/s?wd="+book.bookname : book.bookurl}}'>{{book.bookname}} </a></span><span class="author">{{book.bookauthor}}</span></td>
+                        <td><span>{{book.borrow.borrowname}}</span></td>
+                        <td><span>{{ book.borrow.borrowtime | date: 'yyyy-MM-dd'}}</span></td>
+                        <td><div class="btn-group">
+                            <button ng-click="shelfBook(book)" class="btn btn-success btn-sm glyphicon glyphicon-minus" title="还书"></button>
+                            <button ng-click="infoBook(book)" class="btn btn-info btn-sm glyphicon glyphicon-info-sign" title="查看借阅记录"></button>
+
+                      </div></td>
+                    </tr>
+                </tbody>
+                </table>
+
+            </div>
+           </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/ng-template" id="popover.html">
+        <div class="popover" tabindex="-1" ng-show="content">
+            <div class="arrow"></div>
+            <h3 class="popover-title" >借阅人信息</h3>
+            <div class="popover-dialog">
+                <div class="popover-content">
+                    <form name="popoverForm" ng-submit="borrowBook(book);$hide()" novalidate>
+                        <div id="name-group" class="form-group">
+                        <input class="form-control" name="book.borrow.borrowname" type='text'  placeholder="姓名" ng-model="book.borrow.borrowname" ng-minlength="2" ng-maxlength="5" required/><span class="help-block"></span>
+                            <p>借阅时间默认为登记时间，如果想自定义，请联系我¬_¬ 😏</p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-danger" ng-click="$hide()">取消</button>
+                            <button type="submit" class="btn btn-primary" >提交</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </script>
+
+</body>
+</html>
