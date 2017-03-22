@@ -1,0 +1,41 @@
+body {
+    font-family: 'Play', Arial, sans-serif;
+	margin: 0 auto;
+	width:100%;
+	height:100%;
+	background:#eee;
+}
+.pagehead{
+	/*margin:1rem;*/
+	padding-bottom:1rem;
+    line-height: 48px;
+}
+
+h1 {
+    font-family: 'Poiret One', Arial, sans-serif;
+    font-size: 20pt;
+    line-height: 28pt;
+}
+a {
+    font-size: 12pt;
+    line-height: 30px;    
+}
+.rand {
+    font-size: 18px;
+    line-height: 1.33;
+}
+.right {
+   /* float: right;*/
+}
+a .right {
+    display: none;
+}
+a:hover .right {
+    display: block;
+}
+
+.author {
+	background-color:#00eeff;
+	color:#333;
+	margin-left: 0.5em;
+}

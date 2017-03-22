@@ -4,35 +4,39 @@
 
 <head>
     <meta charset="utf-8">
-    <title>图书借阅列表</title>
+    <title>图书借阅登记表</title>
 	<link rel="stylesheet" href="components/css/bootstrap.css">
-	<link rel="stylesheet" href="components/css/angular-motion.css">	
+	<link rel="stylesheet" href="components/css/angular-motion.css">
+	
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
-	<script src="components/js/angular.min.js"></script>
-	<script src="components/js/angular-animate.min.js"></script>
-	<script src="components/js/angular-strap.min.js"></script>
-	<script src="components/js/angular-strap.tpl.min.js"></script>	
-	<script type="text/javascript" src="js/booklist.js"></script>
+		<script src="components/js/angular.min.js"></script>
+		<script src="components/js/angular-animate.min.js"></script>
+		<script src="components/js/angular-strap.min.js"></script>
+		<script src="components/js/angular-strap.tpl.min.js"></script>
+		
+        <script type="text/javascript" src="js/booklistm.js"></script>
+
 
     </head>
     <body ng-controller="bookController">
 
     <div >
       <div class="container-fluid">
-      <div class="pagehead">
+      <div class="pagehead" style="position: fixed; width: 100%;  z-index: 100;background: #eee;padding-right: 30px;">
           <div style="float:left;"><span><img src="css/logo.png" ></span><span style="margin-left: 20px; font-size:1.2em;">当前书籍总数： {{books.length}} 本</span></div>
+          <div style="float:left; margin: 10px;padding-left: 20px;"><span><input class="form-control" type='text' ng-model='searchwd' placeholder="关键字搜索"/></span></div>
           <div style="float:right;">
                 <form class="form-inline" ng-submit='addBook()'>                
-                <input class="form-control" type='text' ng-model='newBookName' placeholder="书名" required></input>
-                <input class="form-control" type='text' ng-model='newBookURL' placeholder="书籍介绍URL"></input>
-				<input class="form-control" type='text' ng-model='newBookAuthor' placeholder="作者/编者"></input>
-                    <input class="btn btn-primary" type='submit' value='增加书籍'></input>
+                <input class="form-control" type='text' ng-model='newBookName' placeholder="书名" required/>
+                <input class="form-control" type='text' ng-model='newBookURL' placeholder="书籍介绍URL"/>
+				<input class="form-control" type='text' ng-model='newBookAuthor' placeholder="作者/编者"/>
+                    <input class="btn btn-primary" type='submit' value='增加书籍'/>
                 </form>
           </div>
           <div style="clear:both;"></div>
       </div>
-      <div class="row ">
+      <div class="row " style="position: relative; top: 65px;">
 
 
             <div class="col-md-5">
@@ -46,10 +50,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr  ng-repeat="book in shelfBooks track by $index">
+                    <tr  ng-repeat="book in shelfBooks| filter:{bookname:searchwd}:{bookauthor:searchwd}">
                         <td><span ng-hide="book.info" class="glyphicon glyphicon-minus"></span>
                         <span ng-show="book.info" class="glyphicon glyphicon-heart"></span>
-                        <span><a target="_blank" href='{{book.bookurl==null ?"https://www.baidu.com/s?wd="+book.bookname : book.bookurl}}' >{{book.bookname}}</a> </span><span class="author">{{book.bookauthor}}</span></td>
+                        <span><a target="_blank" href='{{book.bookurl ? book.bookurl : "https://www.baidu.com/s?wd="+book.bookname }}' >{{book.bookname}}</a> </span><span class="author">{{book.bookauthor}}</span></td>
                         <td><div class="btn-group">
                            <button ng-click="togglePopover(book)" id="book{{book.bookid}}" class="btn btn-success btn-sm glyphicon glyphicon-ok"  title="{{popover.title}}" data-content="{{popover.content}}"
                                    data-template-url="popover.html" data-animation="am-flip-x" data-auto-close="1" data-container="body" data-toggle="popover" data-placement="left" bs-popover="popover"></button>
@@ -77,10 +81,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="" ng-repeat="book in borrowBooks track by $index">
+                    <tr class="" ng-repeat="book in borrowBooks | filter:{bookname:searchwd}:{bookauthor:searchwd} |orderBy:'borrow.borrowtime':true">
                         <td><span ng-hide="book.info" class="glyphicon glyphicon-minus"></span>
                         <span ng-show="book.info" class="glyphicon glyphicon-heart"></span>
-                        <span><a target="_blank" href='{{book.bookurl==null ?"https://www.baidu.com/s?wd="+book.bookname : book.bookurl}}'>{{book.bookname}} </a></span><span class="author">{{book.bookauthor}}</span></td>
+                        <span><a target="_blank" href='{{book.bookurl ? book.bookurl : "https://www.baidu.com/s?wd="+book.bookname }}'>{{book.bookname}} </a></span><span class="author">{{book.bookauthor}}</span></td>
                         <td><span>{{book.borrow.borrowname}}</span></td>
                         <td><span>{{ book.borrow.borrowtime | date: 'yyyy-MM-dd'}}</span></td>
                         <td><div class="btn-group">
